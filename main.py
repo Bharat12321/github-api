@@ -22,11 +22,21 @@ class Gitcall():
             counter += 1
         return counter
 
+    def get_contributers(self, count=False):
+        contributer_list = []
+        contributers = self.repo.get_contributors()
+        for ctr in contributers:
+            contributer_list.append({'contributer-id': ctr.id, 'contributer-title': ctr.name})
+        if count:
+            return len(contributer_list)
+        return contributer_list
+
     def get_forks(self):
         forks = self.repo.get_forks()
+        fork_count = 0
         for i in forks:
-            print('frk: ', i)
-        return 0
+            fork_count += 1
+        return fork_count
 
     def get_stars(self):
         return self.repo.stargazers_count
@@ -47,21 +57,22 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("access_token")
     args = parser.parse_args()
-
     try:
         obj = Gitcall(args.access_token)
-        commit_count = obj.get_commits()
         pull_count = obj.get_pulls()
+        print("Pull requests count: ", pull_count)
         fork_count = obj.get_forks()
+        print("Forks count : ", fork_count)
         star_count = obj.get_stars()
-        releases_lt = obj.get_releases()        
-
-        print("commit_count: ", commit_count)
-        print("pull_count: ", pull_count)
-        print("fork_count: ", fork_count)
-        print("star_count: ", star_count)
-        print("releases_lt: ", releases_lt)
-
+        print("Stars count : ", star_count)
+        releases_lt = obj.get_releases()
+        print("Latest three releases : ", releases_lt)
+        contributer_count = obj.get_contributers(count=True)
+        print("Contributer count: ", contributer_count)
+        commit_count = obj.get_commits()
+        print("Commits count: ", commit_count)
+        contributer_list_desc = obj.get_contributers()
+        print("Contributer list desc order: ", contributer_list_desc)
     except Exception as err:
         print("Exception : ", str(err))
 
